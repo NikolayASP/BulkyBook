@@ -33,6 +33,16 @@ namespace BulkyBookWeb.Controllers
                 ModelState.AddModelError("Name", "The Display Order cannot exactly match the Name");
             }
 
+            if (_context.Categories.Any(c => c.Name == category.Name))
+            {
+                ModelState.AddModelError("Name", "Category name already in use.");
+            }
+
+            if (_context.Categories.Any(c => c.DisplayOrder == category.DisplayOrder))
+            {
+                ModelState.AddModelError("DisplayOrder", "Display order already in use");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Categories.Add(category);
