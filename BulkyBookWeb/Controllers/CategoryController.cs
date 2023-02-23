@@ -80,12 +80,25 @@ namespace BulkyBookWeb.Controllers
                 ModelState.AddModelError("Name", "The Display Order cannot exactly match the Name");
             }
 
-            if (_context.Categories.Any(c => c.Name == category.Name))
+            var currName = TempData["Name"] as string;
+            if (currName == null)
+            {
+                return NotFound();
+            }
+
+            if (_context.Categories.Any(c => c.Name == category.Name && currName != category.Name))
             {
                 ModelState.AddModelError("Name", "Category name already in use.");
             }
 
-            if (_context.Categories.Any(c => c.DisplayOrder == category.DisplayOrder))
+            var currDisplayOrderAsObj = TempData["DisplayOrder"];
+            if (currDisplayOrderAsObj == null)
+            {
+                return NotFound();
+            }
+
+            var currDisplayOrder = int.Parse(currDisplayOrderAsObj.ToString());
+            if (_context.Categories.Any(c => c.DisplayOrder == category.DisplayOrder && currDisplayOrder != category.DisplayOrder))
             {
                 ModelState.AddModelError("DisplayOrder", "Display order already in use");
             }
@@ -99,6 +112,57 @@ namespace BulkyBookWeb.Controllers
             }
 
             return View(category);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Category category)
+        {
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+
+        //Delete category without a view
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteQuick(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
