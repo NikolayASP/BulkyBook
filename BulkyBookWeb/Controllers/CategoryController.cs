@@ -48,6 +48,8 @@ namespace BulkyBookWeb.Controllers
                 _context.Categories.Add(category);
                 _context.SaveChanges();
 
+                TempData["Success"] = "Category created successfully.";
+
                 return RedirectToAction("Index");
             }
 
@@ -108,6 +110,8 @@ namespace BulkyBookWeb.Controllers
                 _context.Categories.Update(category);
                 _context.SaveChanges();
 
+                TempData["Success"] = "Category Updated Successfully";
+
                 return RedirectToAction("Index");
             }
 
@@ -141,7 +145,6 @@ namespace BulkyBookWeb.Controllers
             return RedirectToAction("Index");
         }
 
-
         //Delete category without a view
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -161,6 +164,8 @@ namespace BulkyBookWeb.Controllers
 
             _context.Categories.Remove(category);
             _context.SaveChanges();
+
+            TempData["Success"] = "Category Deleted Successfully";
 
             return RedirectToAction("Index");
         }
